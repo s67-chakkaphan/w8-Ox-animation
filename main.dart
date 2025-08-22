@@ -32,17 +32,17 @@ class MyAnimatedState extends State<MyAnimated> with TickerProviderStateMixin {
       vsync: this,
     );
     sizeAnimation = TweenSequence<double>([
-    TweenSequenceItem<double>(
+      TweenSequenceItem<double>(
         tween: Tween<double>(
-          begin: 60,
-          end: 100,
+          begin: 100,
+          end: 60,
         ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
       TweenSequenceItem<double>(
         tween: Tween<double>(
-          begin: 100,
-          end: 90,
+          begin: 60,
+          end: 80,
         ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
@@ -70,22 +70,29 @@ class MyAnimatedState extends State<MyAnimated> with TickerProviderStateMixin {
 }
 
 class drawanimated extends CustomPainter {
-  final double radius;
-  drawanimated(this.radius);
+  final double gap;
+  drawanimated(this.gap);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final oPaint = Paint()
-      ..color = Colors.redAccent
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6;
-
-    final c = size.center(Offset.zero);
-    canvas.drawCircle(c, radius, oPaint);
+    final xPaint = Paint()
+      ..color = Colors.blueAccent
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 5;
+    canvas.drawLine(
+      Offset(0 + gap, 0 + gap),
+      Offset(300 - gap, 300 - gap),
+      xPaint,
+    );
+    canvas.drawLine(
+      Offset(300 - gap, 0 + gap),
+      Offset(0 + gap, 300 - gap),
+      xPaint,
+    );
   }
 
   @override
   bool shouldRepaint(covariant drawanimated oldDelegate) {
-    return oldDelegate.radius != radius;
+    return oldDelegate.gap != gap;
   }
 }
