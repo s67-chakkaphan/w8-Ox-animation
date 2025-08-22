@@ -11,6 +11,8 @@ const Color oColor = Colors.blue;
 const Color xColor = Colors.redAccent;
 const double lineStrokeWidth = 3;
 const double markStrokeWidth = 6;
+int? lastRow;
+int? lastCol;
 
 class MyApp extends StatelessWidget {
   @override
@@ -48,6 +50,9 @@ class _GameBoardState extends State<GameBoard> with TickerProviderStateMixin {
       setState(() {
         board[row][col] = playerTurn ? playerXMark : playerOMark;
 
+        lastRow = row;
+        lastCol = col;
+
         if (!playerTurn) {
           _oController.reset();
           _oController.forward();
@@ -55,6 +60,7 @@ class _GameBoardState extends State<GameBoard> with TickerProviderStateMixin {
           _xController.reset();
           _xController.forward();
         }
+
         playerTurn = !playerTurn;
       });
     }
@@ -285,37 +291,73 @@ class OxTablePainter extends CustomPainter {
     for (int row = 0; row < boardSize; row++) {
       for (int col = 0; col < boardSize; col++) {
         double cellSize = size.width / boardSize;
-        if (board[row][col] == playerOMark) {
-          final oPaint = Paint()
-            ..color = oColor
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = markStrokeWidth;
-          final center = Offset(
-            col * cellSize + cellSize / 2,
-            row * cellSize + cellSize / 2,
-          );
+        if (row == lastRow && col == lastCol) {
+          // lastest
+          if (board[row][col] == playerOMark) {
+            final oPaint = Paint()
+              ..color = oColor
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = markStrokeWidth;
+            final center = Offset(
+              col * cellSize + cellSize / 2,
+              row * cellSize + cellSize / 2,
+            );
 
-          canvas.drawCircle(center, radius * (cellSize / 3), oPaint);
-        } else if (board[row][col] == playerXMark) {
-          final xPaint = Paint()
-            ..color = xColor
-            ..strokeCap = StrokeCap.round
-            ..strokeWidth = markStrokeWidth;
-          final left = col * cellSize;
-          final top = row * cellSize;
-          final right = left + cellSize;
-          final bottom = top + cellSize;
-          final cellspace = cellSize / 5;
-          canvas.drawLine(
-            Offset(left + (gap * cellspace), top + (gap * cellspace)),
-            Offset(right - (gap * cellspace), bottom - (gap * cellspace)),
-            xPaint,
-          );
-          canvas.drawLine(
-            Offset(right - (gap * cellspace), top + (gap * cellspace)),
-            Offset(left + (gap * cellspace), bottom - (gap * cellspace)),
-            xPaint,
-          );
+            canvas.drawCircle(center, radius * (cellSize / 3), oPaint);
+          } else if (board[row][col] == playerXMark) {
+            final xPaint = Paint()
+              ..color = xColor
+              ..strokeCap = StrokeCap.round
+              ..strokeWidth = markStrokeWidth;
+            final left = col * cellSize;
+            final top = row * cellSize;
+            final right = left + cellSize;
+            final bottom = top + cellSize;
+            final cellspace = cellSize / 5;
+            canvas.drawLine(
+              Offset(left + (gap * cellspace), top + (gap * cellspace)),
+              Offset(right - (gap * cellspace), bottom - (gap * cellspace)),
+              xPaint,
+            );
+            canvas.drawLine(
+              Offset(right - (gap * cellspace), top + (gap * cellspace)),
+              Offset(left + (gap * cellspace), bottom - (gap * cellspace)),
+              xPaint,
+            );
+          }
+        } else {
+          // not latest
+          if (board[row][col] == playerOMark) {
+            final oPaint = Paint()
+              ..color = oColor
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = markStrokeWidth;
+            final center = Offset(
+              col * cellSize + cellSize / 2,
+              row * cellSize + cellSize / 2,
+            );
+            canvas.drawCircle(center, cellSize / 3, oPaint);
+          } else if (board[row][col] == playerXMark) {
+            final xPaint = Paint()
+              ..color = xColor
+              ..strokeCap = StrokeCap.round
+              ..strokeWidth = markStrokeWidth;
+            final left = col * cellSize;
+            final top = row * cellSize;
+            final right = left + cellSize;
+            final bottom = top + cellSize;
+            final cellspace = cellSize / 5;
+            canvas.drawLine(
+              Offset(left + cellspace, top + cellspace),
+              Offset(right - cellspace, bottom - cellspace),
+              xPaint,
+            );
+            canvas.drawLine(
+              Offset(right - cellspace, top + cellspace),
+              Offset(left + cellspace, bottom - cellspace),
+              xPaint,
+            );
+          }
         }
       }
     }
